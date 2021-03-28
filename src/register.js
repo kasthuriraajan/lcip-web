@@ -60,7 +60,7 @@ class Register extends Component{
 
     render(){
         return(
-        <Row className="justify-content-md-center">
+        <Row className="justify-content-md-center login-page">
             <Col lg="4" md="4" sm="4">
             <Card text = "dark" className="text-center" 
             style={{ marginRight:'5px', borderColor:'black'}}>

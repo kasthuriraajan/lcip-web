@@ -1,5 +1,15 @@
-.main {
-   margin-top: 100px;
+.login-page {
+    padding-top: 100px;
+    background-image: url(bg2.png);
+}
+
+.primaryNav{
+    background-color: #0c3352 !important;
+}
+
+.secondaryNav{
+    background-color: #236684 !important;
+    width: 16rem;
 }
 
 body > #root > div {
