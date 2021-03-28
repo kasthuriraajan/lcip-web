@@ -50,7 +50,7 @@ class Login extends Component{
             <Row className="justify-content-md-center">
                 <Col lg="4" md="4" sm="4">
                 <Card text = "dark" className="text-center" 
-                style={{ marginTop:'5px', marginRight:'5px', borderColor:'black'}}>
+                style={{ marginRight:'5px', borderColor:'black'}}>
                 <Card.Header>
                     <h1> LCIP </h1>
                     <p>A Light-weight Cloud Identity provider</p>
