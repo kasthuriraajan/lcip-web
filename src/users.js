@@ -42,19 +42,20 @@ class Users extends Component{
         });
     }
     componentDidMount(){
-        fetch("http://localhost:9090/users")
+        fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user/list")
         .then(res => res.json())
         .then(data=>this.setState({users:data}));
+        console.log(this.state.users);
     }
 
   render(){
       var isUserAdd = this.state.isUserAdd;
       const userInfo = this.state.users.map(user => (
-            <tr key={user.userName}>
-            <td>{user.userName}</td>
-            <td>{user.userEmail}</td>
-            <td>{user.tenantId}</td>
-            <td><button className='btn btn-danger' name="deleteUser" value={user.userName} onClick={this.handleShow}>Delete</button></td>
+            <tr key={user.UserName}>
+            <td>{user.UserName}</td>
+            <td>{user.Email}</td>
+            <td>{user.TenantName}</td>
+            <td><button className='btn btn-danger' name="deleteUser" value={user.UserName} onClick={this.handleShow}>Delete</button></td>
             <Modal show={this.state.isDelete} onHide={this.handleClose}>
                 <Modal.Header closeButton>
                 <Modal.Title>Delete</Modal.Title>
