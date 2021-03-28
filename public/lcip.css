@@ -3,11 +3,16 @@
     background-image: url(bg2.png);
 }
 
-.primaryNav{
+.primaryNav {
     background-color: #0c3352 !important;
 }
 
-.secondaryNav{
+.profile {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 1.5em !important;
+}
+
+.secondaryNav {
     background-color: #236684 !important;
     width: 16rem;
 }

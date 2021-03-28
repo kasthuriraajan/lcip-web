@@ -46,7 +46,7 @@ class Dashboard extends Component{
                 <Navbar  variant="dark" sticky="top"  className="primaryNav">
                     <Navbar.Brand href="#home"><h1>LCIP </h1></Navbar.Brand>
                     <Nav className="ml-auto">
-                    <Navbar.Brand>Light-weight Cloud Identity provider</Navbar.Brand> 
+                    <Navbar.Brand className="profile">Light-weight Cloud Identity Provider</Navbar.Brand> 
                         <Button variant="danger" type='button' onClick={this.logout}>Logout</Button>
                     </Nav>                   
                 </Navbar>
