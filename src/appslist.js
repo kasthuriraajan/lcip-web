@@ -35,19 +35,26 @@ class Apps extends Component{
             selectedApp : event.target.value
         });
     }
-    handleDelete = () => {     
-        alert('User  '+ this.state.selectedApp + '  is Deleted');
+    handleDelete = () => {
+        fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/application/'+this.state.selectedApp
+        +'?tenantId='+localStorage.getItem("org"),{
+        method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(data =>'Status' in data?(alert(data.Status)):console.log(data));
         this.setState({
             isDelete : false,
             selectedApp : ""
         });
     }
     componentDidMount(){
-        fetch("http://localhost:9090/apps")
+        fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/application/list?tenantId="
+        +localStorage.getItem("org"))
         .then(res => res.json())
         .then(data=>this.setState({apps:data}));
     }
-    render(){
+    
+    render(){        
         var isCreateApp = this.state.isCreateApp;
         const appInfo = this.state.apps.map(app => (
             <tr key={app.clientID}>
@@ -55,7 +62,7 @@ class Apps extends Component{
             <td>{app.applicationName}</td>
             <td>{app.callbackURL}</td>
             <td>{app.tenantName}</td>
-            <td><button className='btn btn-danger' name="deleteApp" value={app.clientID} onClick={this.handleShow}>Delete</button></td>
+            <td><button className='btn btn-danger' name="deleteApp" value={app.applicationName} onClick={this.handleShow}>Delete</button></td>
             <Modal show={this.state.isDelete} onHide={this.handleClose}>
                 <Modal.Header closeButton>
                 <Modal.Title>Delete</Modal.Title>

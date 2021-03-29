@@ -13,21 +13,13 @@ class Dashboard extends Component{
         }
       }
     loadDashboard = (resp)=>{
-        console.log("Display Loaded");
-        console.log(this.resp);
         this.setState({
             dashboardContent:resp
         });
     }
-    logout=()=>{
-        console.log("LoggedOut")
+    logout = (resp) => {
+        localStorage.clear();
         this.props.loginState(false);
-    }
-    componentDidMount(){
-        console.log("Hello NMonted");
-        fetch("http://localhost:9090/users")
-      .then(res => res.json())
-      .then(data=>console.log(data));
     }
     render(){
         var dashboardContent = <Users/>;

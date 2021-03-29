@@ -34,28 +34,32 @@ class Users extends Component{
             selectedUser : event.target.value
         });
     }
-    handleDelete = () => {     
-        alert('User  '+ this.state.selectedUser + '  is Deleted');
+    handleDelete = () => {
+        fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user/'+this.state.selectedUser
+        +'?tenantId='+localStorage.getItem("org"),{
+        method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(data =>'Status' in data?(alert(data.Status)):console.log(data));
         this.setState({
             isDelete : false,
             selectedUser : ""
         });
     }
     componentDidMount(){
-        fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user/list")
+        fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user/list?tenantId="+localStorage.getItem("org"))
         .then(res => res.json())
         .then(data=>this.setState({users:data}));
-        console.log(this.state.users);
     }
 
   render(){
       var isUserAdd = this.state.isUserAdd;
       const userInfo = this.state.users.map(user => (
-            <tr key={user.UserName}>
-            <td>{user.UserName}</td>
-            <td>{user.Email}</td>
-            <td>{user.TenantName}</td>
-            <td><button className='btn btn-danger' name="deleteUser" value={user.UserName} onClick={this.handleShow}>Delete</button></td>
+            <tr key={user['User Name']}>
+            <td>{user['User Name']}</td>
+            <td>{user['Email']}</td>
+            <td>{user['Tenant Name']}</td>
+            <td><button className='btn btn-danger' name="deleteUser" value={user['User Name']} onClick={this.handleShow}>Delete</button></td>
             <Modal show={this.state.isDelete} onHide={this.handleClose}>
                 <Modal.Header closeButton>
                 <Modal.Title>Delete</Modal.Title>

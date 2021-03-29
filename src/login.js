@@ -6,9 +6,9 @@ class Login extends Component{
     constructor(props){
         super(props);
         this.state = {
-            appId : "A001",
             username : "",
-            password : ""
+            password : "",
+            isLoginProcess : false
         }
     }
     handleChange = (event)=> {
@@ -16,33 +16,108 @@ class Login extends Component{
     }
     
     handleSubmit = (event)=> {
-        alert('Username: ' + this.state.username + 'Password: '+this.state.password);
         const loginInfo = {
-            tenantId : this.state.appId,
+            tenantId : "lcip-super",
+            appName : "lcip-dashboard",
             userName :this.state.username,
-            password : this.state.password 
+            password : this.state.password,
+            expiryDate : this.getExpiryDate(),
+            scopes: "['org-admin','consumer']"
         }
-        this.login(loginInfo);
+
+        fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/token/generate',{
+            method: 'POST',
+            headers: {
+                'content-type':'application/json'
+            },
+            body: JSON.stringify(loginInfo)
+        })
+        .then(res => res.json())
+        .then(data =>this.verify(data));
+        localStorage.setItem("username", this.state.username);
+        this.setState({username:"", password:"",isLoginProcess:true});
+
         event.preventDefault();
     }
 
+    verify = (resp)=>{
+        if ('key' in resp){
+            const tokenInfo = {
+                token : resp.key
+            }
+            fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev//token/validate',{
+                method: 'POST',
+                headers: {
+                    'content-type':'application/json'
+                },
+                body: JSON.stringify(tokenInfo)
+            })
+            .then(res => res.json())
+            .then(data =>this.login(data, resp));
+        }
+        else{
+            if ('Message' in resp){
+                alert(resp.Message);
+            }
+            else{
+                console.log(resp);
+            } 
+            this.setState({isLoginProcess:false});          
+        }
+    }
+    login = (data, resp)=>{
+        if('status' in data){
+            if(data.status==="success"){
+                fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/tenant/list')
+                .then(res => res.json())
+                .then(data =>this.getAppDetail(data));
+
+                this.setState({isLoginProcess:false});
+                localStorage.setItem("token",resp.key);
+                this.props.loginState(true);
+            }
+            else{
+                console.log(data)
+                this.setState({isLoginProcess:false});
+            }
+        }
+        else{
+            if('Message' in data){
+                alert(data.Message)
+            }
+            else{
+                console.log(data)
+            }
+            this.setState({isLoginProcess:false});
+        }        
+    }
+
+    getAppDetail = (data)=>{
+        data.map(tenant=>(
+            (localStorage.getItem("username")===tenant['Tenant Admin'])?localStorage.setItem("org",tenant['Tenant Id']):null            
+        ));
+    }
+
     toRegister = ()=>{
-        console.log("Go To Register Page");
         this.props.goToRegisterPage(false);
     }
 
-    login = (userInfo)=>{
-        fetch('http://localhost:9090/echo',{
-        method: 'POST',
-        headers: {
-            'content-type':'application/json'
-        },
-        body: JSON.stringify(userInfo)
-    })
-    .then(res => res.json())
-    .then(data =>console.log(data));
+    cancel = ()=>{
+        this.setState({
+            username : "",
+            password : ""
+        });
+        localStorage.clear();
+        this.props.loginState(false);
+    }
 
-    this.props.loginState(true);
+    getExpiryDate = ()=>{
+        var expiryDate = new Date();
+        expiryDate.setMonth(expiryDate.getMonth()+1);
+        var pre =expiryDate.toISOString().split("T"); 
+        var suff = expiryDate.toUTCString().split(expiryDate.getFullYear());
+        var finalExpiryDate = pre[0]+suff[1];
+        return finalExpiryDate;
     }
    
     render(){
@@ -64,17 +139,18 @@ class Login extends Component{
                             <InputGroup.Text><FontAwesomeIcon icon='user'/></InputGroup.Text>
                             </InputGroup.Prepend>
                             <Form.Control type="text" name="username" value={this.state.username} placeholder="Username" 
-                            onChange ={this.handleChange}/>
+                            onChange ={this.handleChange} required/>
                         </InputGroup> 
                         <InputGroup className="mb-2 mr-sm-2">
                             <InputGroup.Prepend>
                             <InputGroup.Text><FontAwesomeIcon icon='key'/></InputGroup.Text>
                             </InputGroup.Prepend>
                             <Form.Control type="password"name="password" value={this.state.password} placeholder="Password"
-                            onChange ={this.handleChange} />
+                            onChange ={this.handleChange} required/>
                         </InputGroup>
-                        <Button variant="secondary" type='button' size="lg" style={{ margin:'5px'}}>Cancel</Button>
-                        <Button variant="primary" type="submit" value="Submit" size="lg">Login</Button>                      
+                        <Button variant="secondary" type='button' onClick={this.cancel} size="lg" style={{ margin:'5px'}}>Cancel</Button>
+                        <Button variant="primary" type="submit" value="Submit" size="lg">Login</Button>
+                        {this.state.isLoginProcess?(<h2>Login process is happening</h2>):null}                
                     </Form>
                     <Card.Footer className="text-muted">Are you new to LCIP ? <Button variant="secondary" 
                          type='button' size="lg" onClick={this.toRegister}>Register Here</Button></Card.Footer>

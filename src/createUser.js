@@ -6,7 +6,6 @@ class UserForm extends Component{
     constructor(props){
         super(props);
         this.state = {
-            appId : "A001",
             email:"",
             username : "",
             password : ""
@@ -17,19 +16,23 @@ class UserForm extends Component{
     }
     
     handleSubmit = (event)=> {
-        alert('Email : '+ this.state.email+'Username: ' + this.state.username + 'Password: '+this.state.password);
         const userInfo ={
-            tenantId : this.state.appId,
+            tenantId : localStorage.getItem("org"),
             userEmail: this.state.email,
-            userName :this.state.username,
+            userName : this.state.username,
             password : this.state.password
         }
+        this.setState({
+            email:"",
+            username : "",
+            password : ""
+        });   
         this.register(userInfo);
         event.preventDefault();
     }
 
     register = (userInfo)=>{
-        fetch('http://localhost:9090/echo',{
+        fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user',{
         method: 'POST',
         headers: {
             'content-type':'application/json'
@@ -37,8 +40,17 @@ class UserForm extends Component{
         body: JSON.stringify(userInfo)
     })
     .then(res => res.json())
-    .then(data =>console.log(data));
+    .then(data =>'Status' in data?(alert(data.Status)):console.log(data));
     this.props.setAddedUser(true);
+    }
+
+    cancel = ()=>{
+        this.setState({
+            email:"",
+            username : "",
+            password : ""
+        });
+        this.props.setAddedUser(true);
     }
 
   render(){
@@ -72,7 +84,7 @@ class UserForm extends Component{
                         onChange ={this.handleChange}/>
                     </InputGroup>
                     <Row className="justify-content-md-center">
-                        <Button variant="secondary" type='button' size="lg" style={{ margin:'5px'}}>Cancel</Button>
+                        <Button variant="secondary" type='button' onClick={this.cancel} size="lg" style={{ margin:'5px'}}>Cancel</Button>
                         <Button variant="success" type='submit' value="Submit" size="lg" style={{ margin:'5px'}}>Add User</Button>
                     </Row>                    
                 </Form>            

@@ -6,7 +6,6 @@ class Register extends Component{
     constructor(props){
         super(props);
         this.state = {
-            appId : "A001",
             tenantName:"",
             email:"",
             username : "",
@@ -20,14 +19,17 @@ class Register extends Component{
     handleSubmit = (event)=> {
         alert('Tenant : '+ this.state.tenantName+'UserName: ' + this.state.username);
         const tenantInfo ={
-            tenantName : this.state.tenantName
+            tenantId : this.state.tenantName,
+            adminUserName : this.state.username,
+            adminEmail : this.state.email,
+            adminPassword : this.state.password
         }        
         this.createTenant(tenantInfo);
         event.preventDefault();
     }
 
     createTenant = (tenantInfo)=>{
-        fetch('http://localhost:9090/echo',{
+        fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/tenant/add',{
         method: 'POST',
         headers: {
             'content-type':'application/json'
@@ -37,7 +39,7 @@ class Register extends Component{
         .then(res => res.json())
         .then(data =>console.log(data));
         const userInfo = {
-            tenantId : "T001",
+            tenantId : "lcip-super",
             userEmail: this.state.email,
             userName : this.state.username,
             password : this.state.password
@@ -46,16 +48,25 @@ class Register extends Component{
     }
 
     register = (userInfo)=>{
-        fetch('http://localhost:9090/echo',{
-        method: 'POST',
-        headers: {
-            'content-type':'application/json'
-        },
-        body: JSON.stringify(userInfo)
-    })
-    .then(res => res.json())
-    .then(data =>console.log(data));
-    this.props.getRegister(true);
+        fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user',{
+            method: 'POST',
+            headers: {
+                'content-type':'application/json'
+            },
+            body: JSON.stringify(userInfo)
+        })
+        .then(res => res.json())
+        .then(data =>console.log(data));
+        this.props.getRegister(true);
+    }
+
+    cancel = ()=>{
+        this.setState({
+            email:"",
+            username : "",
+            password : ""
+        });
+        this.props.getRegister(true);
     }
 
     render(){
@@ -99,7 +110,7 @@ class Register extends Component{
                         <Form.Control type="password" name="password" value={this.state.password} placeholder="Password" 
                         onChange ={this.handleChange}/>
                     </InputGroup>
-                    <Button variant="secondary" type='submit' size="lg" style={{ margin:'5px'}}>Clear</Button>
+                    <Button variant="secondary" type='button' onClick={this.cancel} size="lg" style={{ margin:'5px'}}>Clear</Button>
                     <Button variant="success" type='submit' value="Submit" size="lg" >Register</Button>                      
                 </Form>
             </Card>

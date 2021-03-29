@@ -6,7 +6,6 @@ class AppForm extends Component{
     constructor(props){
         super(props);
         this.state = {
-            tenantId : "T001",
             appName:"",
             callbackURL : ""
         }
@@ -16,27 +15,24 @@ class AppForm extends Component{
     }
     
     handleSubmit = (event)=> {
-        alert('App : '+ this.state.appName+'Callback: ' + this.state.callbackURL);
         const appInfo ={
-            tenantName : this.state.tenantId,
-            applicationName : this.state.appName,
-            callbackURL : this.state.callbackURL
+            tenantId : localStorage.getItem("org"),
+            appName : this.state.appName,
+            callBackUrl : this.state.callbackURL
         }
-        this.createApp(appInfo);
-        event.preventDefault();
-    }
-    createApp = (appInfo)=>{
-        fetch('http://localhost:9090/echo',{
+        fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/application',{
         method: 'POST',
-        headers: {
-            'content-type':'application/json'
-        },
-            body: JSON.stringify(appInfo)
+            headers: {
+                'content-type':'application/json'
+            },
+                body: JSON.stringify(appInfo)
         })
         .then(res => res.json())
-        .then(data =>console.log(data));
+        .then(data =>'Status' in data?(alert(data.Status)):console.log(data));
         this.props.setCreatedApp(true);
+        event.preventDefault();
     }
+
   render(){
     return(
         <Row className="justify-content-md-center">
