@@ -17,7 +17,6 @@ class Register extends Component{
     }
     
     handleSubmit = (event)=> {
-        alert('Tenant : '+ this.state.tenantName+'UserName: ' + this.state.username);
         const tenantInfo ={
             tenantId : this.state.tenantName,
             adminUserName : this.state.username,
@@ -37,7 +36,7 @@ class Register extends Component{
             body: JSON.stringify(tenantInfo)
         })
         .then(res => res.json())
-        .then(data =>console.log(data));
+        .then(data =>('Status' in data)?alert("Tenant "+this.state.tenantName+ " registration is " +data.Status):console.log(data));
         const userInfo = {
             tenantId : "lcip-super",
             userEmail: this.state.email,
@@ -56,7 +55,7 @@ class Register extends Component{
             body: JSON.stringify(userInfo)
         })
         .then(res => res.json())
-        .then(data =>console.log(data));
+        .then(data =>('Status' in data)?alert("User "+this.state.username+" registration is "+data.Status):console.log(data));
         this.props.getRegister(true);
     }
 

@@ -23,12 +23,13 @@ class AppForm extends Component{
         fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/application',{
         method: 'POST',
             headers: {
+                'Authorization': 'Bearer '+localStorage.getItem("token"),
                 'content-type':'application/json'
             },
                 body: JSON.stringify(appInfo)
         })
         .then(res => res.json())
-        .then(data =>'Status' in data?(alert(data.Status)):console.log(data));
+        .then(data =>this.props.setAddedAppData(data));
         this.props.setCreatedApp(true);
         event.preventDefault();
     }

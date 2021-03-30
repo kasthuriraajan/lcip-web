@@ -38,18 +38,54 @@ class Apps extends Component{
     handleDelete = () => {
         fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/application/'+this.state.selectedApp
         +'?tenantId='+localStorage.getItem("org"),{
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'Authorization': 'Bearer '+localStorage.getItem("token")
+        }
         })
         .then(res => res.json())
-        .then(data =>'Status' in data?(alert(data.Status)):console.log(data));
+        .then(data =>this.afterDelete(data));
+    }
+    afterDelete = (data)=>{
+        if('message' in data){
+            alert(data.message);
+            fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/application/list?tenantId="
+            +localStorage.getItem("org"),{
+                    headers: {
+                        'Authorization': 'Bearer '+localStorage.getItem("token")
+                    }})
+            .then(res => res.json())
+            .then(data=>this.setState({apps:data}));
+        }
+        else{
+            console.log(data);
+        }
         this.setState({
             isDelete : false,
             selectedApp : ""
         });
     }
+    afterAdd = (data)=>{
+        if('appName' in data){
+            alert("App " +data.appName+ " is Created.");
+            fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/application/list?tenantId="
+            +localStorage.getItem("org"),{
+                    headers: {
+                        'Authorization': 'Bearer '+localStorage.getItem("token")
+                    }})
+            .then(res => res.json())
+            .then(data=>this.setState({apps:data}));
+        }
+        else{
+            console.log(data);
+        }
+    }
     componentDidMount(){
         fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/application/list?tenantId="
-        +localStorage.getItem("org"))
+        +localStorage.getItem("org"),{
+                headers: {
+                    'Authorization': 'Bearer '+localStorage.getItem("token")
+                }})
         .then(res => res.json())
         .then(data=>this.setState({apps:data}));
     }
@@ -106,7 +142,7 @@ class Apps extends Component{
             style={{ minHeight: '50rem' ,  marginTop:'5px', marginRight:'5px', borderColor:'black'}}>
             <Card.Header><h2><FontAwesomeIcon icon="layer-group" />  Apps</h2></Card.Header> 
             <hr/>  
-            {isCreateApp?<AppForm setCreatedApp = {this.setAppCreated}/>:table} 
+            {isCreateApp?<AppForm setAddedAppData={this.afterAdd} setCreatedApp = {this.setAppCreated}/>:table} 
         </Card>
 
         );

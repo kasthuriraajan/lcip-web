@@ -68,7 +68,10 @@ class Login extends Component{
     login = (data, resp)=>{
         if('status' in data){
             if(data.status==="success"){
-                fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/tenant/list')
+                fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/tenant/list',{
+                    headers: {
+                        'Authorization': 'Bearer '+localStorage.getItem("token")
+                    }})
                 .then(res => res.json())
                 .then(data =>this.getAppDetail(data));
 

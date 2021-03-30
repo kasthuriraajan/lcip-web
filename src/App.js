@@ -15,14 +15,14 @@ class App extends Component{
     this.setState({isRegistered:resp});
   }
   login =(resp)=>{
+    localStorage.setItem("isLoggedin", resp);
     this.setState({isLoggedin:resp});
   }
   render(){
     var isRegisterd = this.state.isRegistered;
-    var isLoggedin = this.state.isLoggedin;
     var form = (isRegisterd?<Login goToRegisterPage= {this.register} loginState={this.login}/>:<Register getRegister={this.register}/>);
     return (
-            (isLoggedin?<Dashboard loginState={this.login}/>:form)
+            ((localStorage.getItem("isLoggedin")==='true')?<Dashboard loginState={this.login}/>:form)
             );
   }
 }

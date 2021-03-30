@@ -10,7 +10,8 @@ class Users extends Component{
           isUserAdd : false,
           isDelete : false,
           selectedUser : "",
-          users : []
+          users : [],
+          date : new Date()
         }
       }
     launchAddUser = ()=>{
@@ -37,17 +38,51 @@ class Users extends Component{
     handleDelete = () => {
         fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user/'+this.state.selectedUser
         +'?tenantId='+localStorage.getItem("org"),{
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'Authorization': 'Bearer '+localStorage.getItem("token")
+        }
         })
         .then(res => res.json())
-        .then(data =>'Status' in data?(alert(data.Status)):console.log(data));
+        .then(data => this.afterDelete(data));
+    }
+    afterDelete = (data)=>{
+        if('Status' in data){
+            alert(data.Status);
+            fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user/list?tenantId="+localStorage.getItem("org"),{
+                headers: {
+                    'Authorization': 'Bearer '+localStorage.getItem("token")
+                }})
+            .then(res => res.json())
+            .then(data=>this.setState({users:data}));
+        }
+        else{
+            console.log(data);
+        }
         this.setState({
             isDelete : false,
             selectedUser : ""
         });
     }
+    afterAdd = (data)=>{
+        if('Status' in data){
+            alert(data.Status);
+            fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user/list?tenantId="+localStorage.getItem("org"),{
+                headers: {
+                    'Authorization': 'Bearer '+localStorage.getItem("token")
+                }})
+            .then(res => res.json())
+            .then(data=>this.setState({users:data}));
+        }
+        else{
+            console.log(data);
+        }
+    }
     componentDidMount(){
-        fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user/list?tenantId="+localStorage.getItem("org"))
+        fetch("https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/user/list?tenantId="+localStorage.getItem("org"),{
+            headers: {
+                'Authorization': 'Bearer '+localStorage.getItem("token")
+            }})
         .then(res => res.json())
         .then(data=>this.setState({users:data}));
     }
@@ -103,7 +138,7 @@ class Users extends Component{
             style={{ minHeight: '50rem' ,  marginTop:'5px', marginRight:'5px', borderColor:'black'}}>
             <Card.Header><h2><FontAwesomeIcon icon="users" />  Users</h2></Card.Header> 
             <hr/>
-            {isUserAdd?<UserForm setAddedUser={this.setUserAdded}/>:table}
+            {isUserAdd?<UserForm setAddedUserData={this.afterAdd} setAddedUser={this.setUserAdded}/>:table}
         </Card>
         
         );
