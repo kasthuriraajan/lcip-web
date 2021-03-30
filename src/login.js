@@ -33,27 +33,25 @@ class Login extends Component{
             body: JSON.stringify(loginInfo)
         })
         .then(res => res.json())
-        .then(data =>this.verify(data));
+        .then(data =>this.login(data));
         localStorage.setItem("username", this.state.username);
         this.setState({username:"", password:"",isLoginProcess:true});
 
         event.preventDefault();
     }
 
-    verify = (resp)=>{
+    login = (resp)=>{
         if ('key' in resp){
-            const tokenInfo = {
-                token : resp.key
-            }
-            fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev//token/validate',{
-                method: 'POST',
-                headers: {
-                    'content-type':'application/json'
-                },
-                body: JSON.stringify(tokenInfo)
-            })
+            fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/tenant/list',{
+                    headers: {
+                        'Authorization': 'Bearer '+localStorage.getItem("token")
+                    }})
             .then(res => res.json())
-            .then(data =>this.login(data, resp));
+            .then(data =>this.getAppDetail(data));
+
+            this.setState({isLoginProcess:false});
+            localStorage.setItem("token",resp.key);
+            this.props.loginState(true);
         }
         else{
             if ('Message' in resp){
@@ -64,35 +62,6 @@ class Login extends Component{
             } 
             this.setState({isLoginProcess:false});          
         }
-    }
-    login = (data, resp)=>{
-        if('status' in data){
-            if(data.status==="success"){
-                fetch('https://5n3eaptgj4.execute-api.us-east-1.amazonaws.com/dev/tenant/list',{
-                    headers: {
-                        'Authorization': 'Bearer '+localStorage.getItem("token")
-                    }})
-                .then(res => res.json())
-                .then(data =>this.getAppDetail(data));
-
-                this.setState({isLoginProcess:false});
-                localStorage.setItem("token",resp.key);
-                this.props.loginState(true);
-            }
-            else{
-                console.log(data)
-                this.setState({isLoginProcess:false});
-            }
-        }
-        else{
-            if('Message' in data){
-                alert(data.Message)
-            }
-            else{
-                console.log(data)
-            }
-            this.setState({isLoginProcess:false});
-        }        
     }
 
     getAppDetail = (data)=>{

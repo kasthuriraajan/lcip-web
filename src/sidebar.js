@@ -18,6 +18,12 @@ class Sidebar extends Component{
 render(){
         return(
           <div>
+            <Button variant="secondary" type='button' onClick={this.loadTenants}
+            style={{ alignItems:'center', marginTop:'5px', marginLeft:'5px'}} className="secondaryNav">
+              <FontAwesomeIcon icon="university" size="6x"/>
+              <h4>Home</h4>
+            </Button>
+            
             <Button variant="secondary" type='button' onClick={this.loadUser}
             style={{ alignItems:'center', marginTop:'5px', marginLeft:'5px'}} className="secondaryNav">
               <FontAwesomeIcon icon="users" size="6x"/>
@@ -30,11 +36,6 @@ render(){
               <h4>Apps</h4>
             </Button>   
 
-            <Button variant="secondary" type='button' onClick={this.loadTenants}
-            style={{ alignItems:'center', marginTop:'5px', marginLeft:'5px'}} className="secondaryNav">
-              <FontAwesomeIcon icon="university" size="6x"/>
-              <h4>Tenants</h4>
-            </Button>
           </div>
             
         );
