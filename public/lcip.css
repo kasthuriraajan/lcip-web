@@ -32,3 +32,23 @@ html {
     height: 100%;
     font-family: Montserrat !important;;
 }
+
+.buttonload2 {
+    position: absolute !important;
+    height: 51px !important;
+    top: 50% !important;
+    z-index: 999 !important;
+    margin-left: -174px !important;
+    padding-right: 2px !important;
+    opacity: 1.0 !important;
+    font-size: 28px !important;
+    color: black !important;
+    background-color: Transparent !important;
+    background-repeat: no-repeat;
+    outline: none !important;
+    border-color: Transparent !important;
+}
+
+.loader2 {
+    opacity: 0.5;
+}

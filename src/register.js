@@ -76,10 +76,9 @@ class Register extends Component{
             style={{ marginRight:'5px', borderColor:'black'}}>
             <Card.Header>
                 <h1> LCIP </h1>
-                <p>A Light-weight Cloud Identity provider</p>
+                <p>Light-weight Cloud Identity provider</p>
             </Card.Header> 
-            <Card.Title  style={{ marginTop:'15px'}}><h2>Register Here</h2></Card.Title>
-            <hr/>   
+            <Card.Title  style={{ marginTop:'15px'}}><h2>Register Here</h2></Card.Title>  
                 <Form style={{ margin:'15px'}} onSubmit={this.handleSubmit}>
                     <InputGroup className="mb-2 mr-sm-2">
                         <InputGroup.Prepend>
